@@ -9,6 +9,7 @@ A small Astro-powered personal blog with Markdown and MDX posts, RSS, sitemap su
 - RSS feed and sitemap integration
 - Custom page layouts and reusable components
 - Local font configuration
+Teste 16/09
 
 ## Setup
 
