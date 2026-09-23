@@ -21,5 +21,20 @@
   },
   "allowScripts": {
     "esbuild": true
-  }
+  },
+  "description": "A small Astro-powered personal blog with Markdown and MDX posts, RSS, sitemap support, and custom styling.",
+  "main": "index.js",
+  "devDependencies": {
+    "vitest": "^5.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Claitonbatistibueno/cs4421-astro-blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Claitonbatistibueno/cs4421-astro-blog/issues"
+  },
+  "homepage": "https://github.com/Claitonbatistibueno/cs4421-astro-blog#readme"
 }
