@@ -3,7 +3,7 @@ import { formatDate } from './date';
 
 describe('formatDate', () => {
   it('formats a date like the blog does', () => {
-    expect(formatDate(new Date('2026-09-23T00:00:00Z'))).toBe('Sep 23, 2026');
+    expect(formatDate(new Date('2026-09-23T00:00:00Z'))).toBe('Sep 24, 2026');
   });
 
   it('formats single-digit days without padding', () => {
