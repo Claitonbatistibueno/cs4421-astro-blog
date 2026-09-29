@@ -1,4 +1,4 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
@@ -7,24 +7,26 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js Runtime
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Project Dependencies
         run: npm ci
 
-      - name: Run linter
-        run: npm run lint --if-present
+      - name: Run Static Analysis & Tests
+        run: |
+          npm run lint
+          npm run check
+          npm run test:unit
 
-      - name: Run unit tests
-        run: npm run test:unit --if-present
+      - name: Build Astro Site
+        run: npm run build
