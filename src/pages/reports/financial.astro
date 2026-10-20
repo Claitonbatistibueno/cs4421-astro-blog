@@ -1,0 +1,58 @@
+---
+import FarmLayout from '../../layouts/FarmLayout.astro';
+import ReportNav from '../../components/reports/ReportNav.astro';
+import Stats from '../../components/reports/Stats.astro';
+import BarChart from '../../components/reports/BarChart.astro';
+import { loadFarmDb } from '../../lib/farmDb';
+import { financialReport } from '../../lib/farmReports';
+import { formatCurrency, formatNumber } from '../../utils/format';
+
+const r = financialReport(loadFarmDb());
+---
+
+<FarmLayout title="Financial Report | Farm Project">
+	<h1>Financial Report</h1>
+	<ReportNav />
+	<Stats
+		items={[
+			{ value: formatCurrency(r.stats.income), label: 'Income (livestock sales)' },
+			{ value: formatCurrency(r.stats.expenses), label: 'Expenses' },
+			{ value: formatCurrency(r.stats.balance), label: 'Balance' },
+			{ value: formatNumber(r.stats.transactions), label: 'Transactions' },
+		]}
+	/>
+	<div class="grid-2">
+		<BarChart title="Expenses by category" data={r.expensesByCategory} format={formatCurrency} />
+		<BarChart
+			title="Income vs expenses"
+			data={[
+				{ label: 'Income', value: r.stats.income },
+				{ label: 'Expenses', value: r.stats.expenses },
+			]}
+			format={formatCurrency}
+		/>
+	</div>
+	<h2>Unified ledger</h2>
+	<div class="table-scroll">
+		<table class="data-table">
+			<thead>
+				<tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th class="num">Amount</th></tr>
+			</thead>
+			<tbody>
+				{
+					r.ledger.map((l) => (
+						<tr>
+							<td>{l.date}</td>
+							<td><span class:list={['badge', l.type === 'Income' ? 'ok' : 'bad']}>{l.type}</span></td>
+							<td>{l.category}</td>
+							<td>{l.description}</td>
+							<td class:list={['num', l.type === 'Income' ? 'pos' : 'neg']}>
+								{l.type === 'Income' ? '+' : '-'}{formatCurrency(l.amount)}
+							</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+</FarmLayout>
