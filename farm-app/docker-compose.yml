@@ -1,0 +1,38 @@
+# Run the full Farm Project system locally:
+#   cd farm-app
+#   docker compose up --build
+# Then open http://localhost:8080  (login: Claiton / code 123456)
+services:
+  db:
+    # The dump was exported from MariaDB (phpMyAdmin), so MariaDB reads it as-is.
+    image: mariadb:10.11
+    environment:
+      MARIADB_DATABASE: farmproject
+      MARIADB_USER: farm
+      MARIADB_PASSWORD: farm
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      # Any .sql file here runs once, on the first start, and creates the tables and data.
+      - ./farmproject.sql:/docker-entrypoint-initdb.d/farmproject.sql:ro
+      - farm-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: farmproject
+      DB_USER: farm
+      DB_PASS: farm
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  farm-db:
