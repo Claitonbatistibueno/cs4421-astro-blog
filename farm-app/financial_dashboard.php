@@ -9,7 +9,7 @@ session_start();
 if (isset($_GET['action']) && $_GET['action'] === 'get_animal_weight' && isset($_GET['animal_id'])) {
     header('Content-Type: application/json');
     try {
-        $pdoAjax = new PDO("mysql:host=localhost;dbname=farmproject;charset=utf8mb4", 'root', '', [
+        $pdoAjax = new PDO("mysql:host=" . (getenv('DB_HOST') ?: 'localhost') . ";dbname=" . (getenv('DB_NAME') ?: 'farmproject') . ";charset=utf8mb4", (getenv('DB_USER') ?: 'root'), (getenv('DB_PASS') ?: ''), [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
         $stmt = $pdoAjax->prepare("SELECT weight_kg FROM weighing WHERE animal_id = ? ORDER BY weighing_date DESC LIMIT 1");
@@ -23,7 +23,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_animal_weight' && isset($
 // --- 2. AUTH CHECK & DB CONNECTION ---
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 
-$host = "localhost"; $db = "farmproject"; $user = "root"; $pass = "";
+$host = (getenv('DB_HOST') ?: 'localhost'); $db = (getenv('DB_NAME') ?: 'farmproject'); $user = (getenv('DB_USER') ?: 'root'); $pass = (getenv('DB_PASS') ?: '');
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC

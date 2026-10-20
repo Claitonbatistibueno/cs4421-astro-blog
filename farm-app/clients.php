@@ -10,7 +10,7 @@ require_once 'config.php';
 // --- 1. DB CONNECTION ---
 if (!isset($pdo)) {
     try {
-        $pdo = new PDO("mysql:host=localhost;dbname=farmproject;charset=utf8mb4", 'root', '', [
+        $pdo = new PDO("mysql:host=" . (getenv('DB_HOST') ?: 'localhost') . ";dbname=" . (getenv('DB_NAME') ?: 'farmproject') . ";charset=utf8mb4", (getenv('DB_USER') ?: 'root'), (getenv('DB_PASS') ?: ''), [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);

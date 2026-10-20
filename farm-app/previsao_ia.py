@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import IsolationForest
 
 # --- CONFIGURATION ---
-DB_CONFIG = {'host': 'localhost', 'user': 'root', 'password': '', 'database': 'farmproject'}
+DB_CONFIG = {'host': os.environ.get('DB_HOST', 'localhost'), 'user': os.environ.get('DB_USER', 'root'), 'password': os.environ.get('DB_PASS', ''), 'database': os.environ.get('DB_NAME', 'farmproject')}
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_FILE = os.path.join(BASE_DIR, 'ai_analysis.json')
 ERROR_FILE = os.path.join(BASE_DIR, 'ai_error.log')
