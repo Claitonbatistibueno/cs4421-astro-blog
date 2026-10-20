@@ -1,0 +1,48 @@
+---
+import FarmLayout from '../../layouts/FarmLayout.astro';
+import ReportNav from '../../components/reports/ReportNav.astro';
+
+const reports = [
+	{ href: '/reports/animals', title: 'Animal Inventory', text: 'Herd list with breed, lot, current weight, costs and estimated profit per animal.', php: 'reports_animals.php' },
+	{ href: '/reports/weight', title: 'Weight & Performance', text: 'Latest weighing, average daily gain and projected date to reach 550 kg.', php: 'reports_weight.php' },
+	{ href: '/reports/health', title: 'Health & Sanitary', text: 'Treatments, medicines, vets and animals blocked by withdrawal period.', php: 'reports_health.php' },
+	{ href: '/reports/financial', title: 'Financial', text: 'Unified ledger of sales, bills and operational costs with the balance.', php: 'reports_financial.php' },
+	{ href: '/reports/feeding', title: 'Nutrition Management', text: 'Feeding events, kilograms consumed and cost by feed type.', php: 'reports_feeding.php' },
+	{ href: '/dashboard', title: 'Dashboard', text: 'Main indicators of the farm on one screen.', php: 'dashboard.php' },
+];
+---
+
+<FarmLayout title="Reports Center | Farm Project">
+	<h1>Reports Center</h1>
+	<ReportNav />
+	<div class="grid-2">
+		{
+			reports.map((r) => (
+				<a class="card card-pad report-card" href={r.href}>
+					<h2>{r.title}</h2>
+					<p class="muted">{r.text}</p>
+					<span class="small muted">
+						Ported from <code>{r.php}</code>
+					</span>
+				</a>
+			))
+		}
+	</div>
+</FarmLayout>
+
+<style>
+	.report-card {
+		color: var(--text);
+		transition: transform 0.2s;
+	}
+	.report-card:hover {
+		text-decoration: none;
+		transform: translateY(-3px);
+		border-color: var(--brand);
+	}
+	.report-card h2 {
+		margin: 0 0 8px;
+		font-size: 18px;
+		color: var(--brand2);
+	}
+</style>
