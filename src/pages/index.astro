@@ -1,45 +1,375 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { Image } from 'astro:assets';
+import FarmLayout from '../layouts/FarmLayout.astro';
+import { kpis, modules, reports } from '../data/farm';
+import heroImg from '../assets/farm/hero-pasture.webp';
+import aerialImg from '../assets/farm/pasture-aerial.webp';
+import cowFieldImg from '../assets/farm/cow-field.webp';
+import cowGrazingImg from '../assets/farm/cow-grazing.webp';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>Welcome to my blog</h1>
-			<p>Thoughts, experiments, and lessons from my journey through software development.</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<FarmLayout>
+	<div class="hero" id="overview">
+		<div class="card">
+			<div class="card-pad">
+				<span class="kicker">Management System</span>
+				<h1>
+					End-to-end farm control: Animals, Feeding, Weighings, Events, Operational and Finance cost
+					control.
+				</h1>
+				<p class="muted">
+					Track costs, margins and productivity across animals, lots and farm operations. Make
+					informed decisions based on real data, improving profitability, cost control and long-term
+					sustainability.
+				</p>
+
+				<div class="grid2" aria-label="Sample KPIs">
+					{
+						kpis.map((kpi) => (
+							<div class="stat">
+								<strong>{kpi.value}</strong>
+								<span>{kpi.label}</span>
+							</div>
+						))
+					}
+				</div>
+
+				<div class="cta-row">
+					<a class="btn primary" href="#form">Register an animal</a>
+					<a class="btn" href="#reports">Finance Reports</a>
+					<a class="btn" href="/coming-soon">Operational Reports</a>
+				</div>
+
+				<div class="note mt-12">
+					<p class="small m-0">
+						Centralized control of animals, health and sanitary events. Keep accurate records of
+						animal status, treatments and phytosanitary actions to support informed decisions and
+						healthier herds.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<aside class="card media" aria-label="Hero image">
+			<Image src={heroImg} alt="Cows grazing on a green pasture" />
+			<div class="overlay" aria-hidden="true"></div>
+			<div class="caption">
+				<span class="pill">Field view</span>
+				<p class="m-0 mt-10">Real-time monitoring of herd location and status.</p>
+			</div>
+		</aside>
+	</div>
+
+	<section id="modules">
+		<div class="section-title"><h2>System modules</h2></div>
+		<div class="tiles">
+			{
+				modules.map((m) => (
+					<div class="tile">
+						<h3>{m.title}</h3>
+						<p>{m.text}</p>
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<section aria-label="Image gallery">
+		<div class="section-title"><h2>Gallery</h2></div>
+		<div class="gallery">
+			<div class="imgbox imgbox-tall">
+				<Image src={aerialImg} alt="Aerial view of cows in a pasture" />
+			</div>
+			<div class="stack">
+				<div class="imgbox imgbox-short">
+					<Image src={cowFieldImg} alt="Cow standing in the field" />
+				</div>
+				<div class="imgbox imgbox-short">
+					<Image src={cowGrazingImg} alt="Cow grazing" />
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="reports">
+		<div class="section-title"><h2>Financial &amp; Operational Reports</h2></div>
+		<div class="card">
+			<div class="card-pad table-wrap">
+				<table aria-label="Reports table">
+					<thead>
+						<tr><th>Report Type</th><th>Business Purpose</th><th>Result Set</th></tr>
+					</thead>
+					<tbody>
+						{
+							reports.map((r) => (
+								<tr>
+									<td><span class="pill">{r.type}</span></td>
+									<td>{r.purpose}</td>
+									<td>{r.resultSet}</td>
+								</tr>
+							))
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</section>
+
+	<section id="form">
+		<div class="section-title">
+			<h2>Form Demo</h2>
+			<p>Static demo: data is not sent anywhere yet.</p>
+		</div>
+		<div class="card">
+			<div class="card-pad">
+				<form aria-label="Animal registration form (demo)">
+					<div class="form-grid">
+						<div>
+							<label for="tag">Animal tag</label>
+							<input id="tag" name="tag_number" type="text" placeholder="e.g., TAG001" />
+						</div>
+						<div>
+							<label for="sex">Sex</label>
+							<select id="sex" name="sex">
+								<option>male</option>
+								<option>female</option>
+							</select>
+						</div>
+						<div>
+							<label for="country">Country of origin</label>
+							<input id="country" name="country_id" type="number" placeholder="e.g., 1" />
+						</div>
+						<div>
+							<label for="status">Status</label>
+							<select id="status" name="status">
+								<option>active</option>
+								<option>sold</option>
+								<option>dead</option>
+							</select>
+						</div>
+					</div>
+					<div class="mt-12">
+						<label for="desc">Notes (description)</label>
+						<textarea
+							id="desc"
+							name="description"
+							placeholder="Example: moved to lot A, health notes, feeding remarks, etc."></textarea>
+					</div>
+					<div class="cta-row">
+						<button class="btn primary" type="button" disabled>Demo — data not sent</button>
+						<input class="btn" type="reset" value="Clear" />
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+
+	<section id="contact">
+		<div class="section-title"><h2>Contact</h2></div>
+		<div class="card">
+			<div class="card-pad grid2">
+				<div>
+					<h3 class="m-0">Location</h3>
+					<iframe
+						class="map-iframe"
+						src="https://www.google.com/maps?q=Limerick,Ireland&output=embed"
+						width="100%"
+						height="260"
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						title="Map of Limerick, Ireland"></iframe>
+				</div>
+				<div>
+					<h3 class="m-0">Contacts</h3>
+					<p class="muted">
+						Claiton Batisti Bueno<br />
+						Email: <a href="mailto:75.Claiton.BatistiBueno@learner.lcete.ie"
+							>75.Claiton.BatistiBueno@learner.lcete.ie</a
+						><br />
+						Limerick, Ireland
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+</FarmLayout>
+
+<style>
+	.hero {
+		padding: 16px 0 20px;
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		gap: 24px;
+	}
+	.hero h1 {
+		margin: 15px 0 12px;
+		font-size: 30px;
+		letter-spacing: -1px;
+	}
+	.grid2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+	}
+	.stat {
+		padding: 14px;
+		border-radius: 14px;
+		border: 1px solid var(--line);
+		background: rgba(255, 255, 255, 0.04);
+	}
+	.stat strong {
+		display: block;
+		font-size: 20px;
+		color: var(--brand);
+	}
+	.stat span {
+		color: var(--muted);
+		font-size: 12px;
+	}
+	.cta-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 16px;
+	}
+	.btn[disabled] {
+		cursor: not-allowed;
+		opacity: 0.8;
+	}
+	.media {
+		position: relative;
+		min-height: 320px;
+	}
+	.media :global(img) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, rgba(6, 10, 19, 0.8), rgba(6, 10, 19, 0.2), transparent);
+	}
+	.caption {
+		position: absolute;
+		left: 20px;
+		right: 20px;
+		bottom: 20px;
+		font-size: 13px;
+	}
+	.section-title h2 {
+		margin: 0;
+		font-size: 20px;
+		color: var(--brand2);
+	}
+	.tiles {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+	}
+	.tile {
+		padding: 20px;
+		border-radius: 16px;
+		border: 1px solid var(--line);
+		background: rgba(255, 255, 255, 0.03);
+	}
+	.tile h3 {
+		margin: 0 0 10px;
+		font-size: 17px;
+	}
+	.tile p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 14px;
+	}
+	.gallery {
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		gap: 16px;
+	}
+	.stack {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+	}
+	.imgbox {
+		border-radius: 16px;
+		overflow: hidden;
+		border: 1px solid var(--line);
+	}
+	.imgbox :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.imgbox-tall {
+		min-height: 280px;
+	}
+	.imgbox-short {
+		min-height: 140px;
+	}
+	.table-wrap {
+		overflow-x: auto;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	th,
+	td {
+		text-align: left;
+		padding: 14px;
+		border-bottom: 1px solid var(--line);
+		vertical-align: top;
+		font-size: 14px;
+	}
+	th {
+		color: var(--brand);
+		font-size: 12px;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+	.form-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+	}
+	label {
+		display: block;
+		font-size: 12px;
+		text-transform: uppercase;
+		color: var(--muted);
+		margin: 0 0 8px;
+	}
+	input:not(.btn),
+	select,
+	textarea {
+		width: 100%;
+		padding: 12px 14px;
+		border-radius: 12px;
+		border: 1px solid var(--line);
+		background: rgba(0, 0, 0, 0.2);
+		color: var(--text);
+		font-size: 14px;
+	}
+	textarea {
+		min-height: 110px;
+	}
+	.map-iframe {
+		border: 0;
+		border-radius: 12px;
+		margin-top: 10px;
+	}
+	@media (max-width: 900px) {
+		.hero,
+		.tiles,
+		.gallery,
+		.form-grid,
+		.grid2 {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
