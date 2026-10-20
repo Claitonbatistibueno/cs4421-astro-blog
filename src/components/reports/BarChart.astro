@@ -1,0 +1,65 @@
+---
+// Horizontal bar chart in plain HTML/CSS (no chart library, no JavaScript).
+interface Props {
+	title: string;
+	data: { label: string; value: number }[];
+	format?: (v: number) => string;
+}
+const { title, data, format = (v: number) => String(v) } = Astro.props;
+const max = Math.max(1, ...data.map((d) => d.value));
+---
+
+<figure class="card card-pad chart">
+	<figcaption>{title}</figcaption>
+	{
+		data.map((d) => (
+			<div class="row">
+				<span class="label">{d.label}</span>
+				<span class="bar" aria-hidden="true">
+					<span style={`width:${(d.value / max) * 100}%`} />
+				</span>
+				<span class="value">{format(d.value)}</span>
+			</div>
+		))
+	}
+</figure>
+
+<style>
+	.chart {
+		margin: 0;
+	}
+	figcaption {
+		font-weight: 700;
+		margin-bottom: 12px;
+		color: #fff;
+	}
+	.row {
+		display: grid;
+		grid-template-columns: minmax(90px, 30%) 1fr auto;
+		align-items: center;
+		gap: 10px;
+		margin: 6px 0;
+		font-size: 13px;
+	}
+	.label {
+		color: var(--muted);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.bar {
+		height: 10px;
+		border-radius: 99px;
+		background: rgba(255, 255, 255, 0.06);
+		overflow: hidden;
+	}
+	.bar span {
+		display: block;
+		height: 100%;
+		border-radius: 99px;
+		background: linear-gradient(90deg, var(--brand), var(--brand2));
+	}
+	.value {
+		font-variant-numeric: tabular-nums;
+	}
+</style>

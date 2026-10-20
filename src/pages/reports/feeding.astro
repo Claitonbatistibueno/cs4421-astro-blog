@@ -1,0 +1,54 @@
+---
+import FarmLayout from '../../layouts/FarmLayout.astro';
+import ReportNav from '../../components/reports/ReportNav.astro';
+import Stats from '../../components/reports/Stats.astro';
+import BarChart from '../../components/reports/BarChart.astro';
+import { loadFarmDb } from '../../lib/farmDb';
+import { feedingReport } from '../../lib/farmReports';
+import { formatCurrency, formatNumber } from '../../utils/format';
+
+const r = feedingReport(loadFarmDb());
+---
+
+<FarmLayout title="Feeding Intelligence | Farm Project">
+	<h1>Feeding Intelligence</h1>
+	<ReportNav />
+	<Stats
+		items={[
+			{ value: formatNumber(r.stats.totalEvents), label: 'Feeding events' },
+			{ value: `${formatNumber(r.stats.totalKg, 1)} kg`, label: 'Total consumed' },
+			{ value: formatCurrency(r.stats.totalCost), label: 'Total feed cost' },
+			{ value: `${formatNumber(r.stats.avgConsumption, 2)} kg`, label: 'Average per event' },
+		]}
+	/>
+	<div class="grid-2">
+		<BarChart title="Cost by feed type" data={r.costByFeed} format={formatCurrency} />
+		<BarChart title="Kilograms per day" data={r.kgByDay} format={(v) => `${formatNumber(v, 1)} kg`} />
+	</div>
+	<h2>Feeding log</h2>
+	<div class="table-scroll">
+		<table class="data-table">
+			<thead>
+				<tr>
+					<th>Date</th><th>Animal tag</th><th>Lot</th><th>Feed type</th>
+					<th class="num">Quantity (kg)</th><th class="num">Unit cost</th><th class="num">Total cost</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					r.events.map((e) => (
+						<tr>
+							<td>{e.date}</td>
+							<td>{e.tag}</td>
+							<td>{e.lot || '—'}</td>
+							<td>{e.feed}</td>
+							<td class="num">{formatNumber(e.qty, 2)}</td>
+							<td class="num">{formatCurrency(e.unitCost)}</td>
+							<td class="num">{formatCurrency(e.total)}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+</FarmLayout>

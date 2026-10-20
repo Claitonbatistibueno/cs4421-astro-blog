@@ -1,0 +1,31 @@
+---
+import FarmLayout from '../layouts/FarmLayout.astro';
+import ReportNav from '../components/reports/ReportNav.astro';
+import Stats from '../components/reports/Stats.astro';
+import BarChart from '../components/reports/BarChart.astro';
+import { loadFarmDb } from '../lib/farmDb';
+import { dashboard } from '../lib/farmReports';
+import { formatCurrency, formatNumber } from '../utils/format';
+
+const d = dashboard(loadFarmDb());
+---
+
+<FarmLayout title="Dashboard | Farm Project">
+	<h1>Dashboard</h1>
+	<ReportNav />
+	<Stats
+		items={[
+			{ value: formatNumber(d.activeAnimals), label: `Active animals (of ${d.totalAnimals})` },
+			{ value: formatNumber(d.activeLots), label: 'Lots in operation' },
+			{ value: `${formatNumber(d.avgDailyGain, 2)} kg`, label: 'Average daily gain' },
+			{ value: formatNumber(d.weighings), label: 'Weighings recorded' },
+			{ value: formatCurrency(d.feedingCost), label: 'Feeding cost' },
+			{ value: formatCurrency(d.medicalCost), label: 'Medical cost' },
+			{ value: formatCurrency(d.operationalCost), label: 'Operational cost' },
+		]}
+	/>
+	<div class="grid-2">
+		<BarChart title="Animals by status" data={d.byStatus} />
+		<BarChart title="Animals by breed" data={d.byBreed} />
+	</div>
+</FarmLayout>

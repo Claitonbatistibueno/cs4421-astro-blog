@@ -1,0 +1,43 @@
+---
+// Tabs shared by the dashboard and every report page.
+const links = [
+	{ href: '/dashboard', label: 'Dashboard' },
+	{ href: '/reports/animals', label: 'Animals' },
+	{ href: '/reports/weight', label: 'Weight' },
+	{ href: '/reports/feeding', label: 'Feeding' },
+	{ href: '/reports/health', label: 'Health' },
+	{ href: '/reports/financial', label: 'Financial' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<nav class="report-nav" aria-label="Reports">
+	<a href="/reports" class:list={{ active: path === '/reports' }}>All reports</a>
+	{links.map((l) => <a href={l.href} class:list={{ active: path === l.href }}>{l.label}</a>)}
+</nav>
+<p class="note small">
+	Read-only snapshot generated at build time from <code>farm-app/farmproject.sql</code>. Login and data
+	entry run in the PHP system (Docker), because a static S3 site has no server or database.
+</p>
+
+<style>
+	.report-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 8px 0 16px;
+	}
+	.report-nav a {
+		padding: 8px 14px;
+		border-radius: 999px;
+		border: 1px solid var(--line);
+		color: var(--text);
+		font-size: 13px;
+	}
+	.report-nav a:hover,
+	.report-nav a.active {
+		border-color: var(--brand);
+		color: var(--brand);
+		text-decoration: none;
+	}
+</style>

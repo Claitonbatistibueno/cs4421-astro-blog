@@ -14,9 +14,30 @@ export class StaticSiteStack extends cdk.Stack {
       autoDeleteObjects: true,
     });
 
+    // S3 (private, via OAC) only knows exact object keys, and defaultRootObject
+    // only applies to "/". Astro builds pages as folder/index.html, so rewrite
+    // "/reports" and "/reports/" to "/reports/index.html" at the edge.
+    const indexRewrite = new cloudfront.Function(this, 'IndexRewrite', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  if (uri.endsWith('/')) {
+    request.uri = uri + 'index.html';
+  } else if (!uri.split('/').pop().includes('.')) {
+    request.uri = uri + '/index.html';
+  }
+  return request;
+}`),
+    });
+
     const distribution = new cloudfront.Distribution(this, 'SiteDistribution', {
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
+        functionAssociations: [
+          { function: indexRewrite, eventType: cloudfront.FunctionEventType.VIEWER_REQUEST },
+        ],
       },
       defaultRootObject: 'index.html',
     });
