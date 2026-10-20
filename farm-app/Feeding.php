@@ -7,10 +7,10 @@
 
 session_start();
 // Database Connection (Matched to your Login.php logic)
-$host = "localhost";
-$db   = "farmproject";
-$user = "root";
-$pass = "";
+$host = (getenv('DB_HOST') ?: 'localhost');
+$db   = (getenv('DB_NAME') ?: 'farmproject');
+$user = (getenv('DB_USER') ?: 'root');
+$pass = (getenv('DB_PASS') ?: '');
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }

@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Configurações do Banco e API
-DB_CONFIG = {'host': 'localhost', 'user': 'root', 'password': '', 'database': 'farmproject'}
+DB_CONFIG = {'host': os.environ.get('DB_HOST', 'localhost'), 'user': os.environ.get('DB_USER', 'root'), 'password': os.environ.get('DB_PASS', ''), 'database': os.environ.get('DB_NAME', 'farmproject')}
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")  # set in your environment, never commit the key
 genai.configure(api_key=GEMINI_API_KEY)
 
