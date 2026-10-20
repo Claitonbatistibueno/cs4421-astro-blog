@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Farm Project - Farm management system (animals, lots, weighing, feeding, events, and costs).">
+  <meta name="Claiton Batisti Bueno" content="Farm Project">
+  <title>Farm Project | Farm Management</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#101a2e;
+      --muted:#9fb0d0;
+      --text:#eaf1ff;
+      --brand:#54d08a;
+      --brand2:#4bc4ff;
+      --line:rgba(255,255,255,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, var(--bg), #060a13);
+      color:var(--text);
+    }
+    a{color:var(--brand2); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{width:min(1100px, 92vw); margin:0 auto}
+    .topbar{
+      border-bottom:1px solid var(--line);
+      background: rgba(16,26,46,.65);
+      backdrop-filter: blur(10px);
+      position:sticky; top:0; z-index:10;
+    }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 0;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background: radial-gradient(circle at 30% 30%, var(--brand), rgba(84,208,138,.2));
+      border:1px solid var(--line);
+    }
+    .brand h1{font-size:16px; margin:0}
+    .brand p{margin:0; font-size:12px; color:var(--muted)}
+    nav ul{list-style:none; display:flex; gap:14px; padding:0; margin:0}
+    nav li{font-size:14px}
+
+    .hero{
+      padding:26px 0 12px 0;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .card{
+      background: rgba(16,26,46,.75);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .card-pad{padding:18px}
+    .kicker{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .hero h2{
+      margin:10px 0 8px 0;
+      font-size:28px;
+      line-height:1.2;
+    }
+    .hero p{color:var(--muted); margin:0 0 14px 0; line-height:1.6}
+    .cta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-size:14px;
+      cursor:pointer;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(84,208,138,.25), rgba(75,196,255,.18));
+      border-color: rgba(84,208,138,.35);
+    }
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .stat{
+      padding:12px; border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .stat strong{display:block; font-size:18px}
+    .stat span{color:var(--muted); font-size:12px}
+
+    .media{position:relative; min-height:320px; background:#0a0f1d}
+    .media img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05)}
+    .media .overlay{position:absolute; inset:0; background: linear-gradient(90deg, rgba(6,10,19,.90), rgba(6,10,19,.30), rgba(6,10,19,.10))}
+    .media .caption{
+      position:absolute; left:16px; bottom:14px; right:16px;
+      color: rgba(234,241,255,.92);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    section{margin:14px 0}
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+      margin:14px 0 10px 0;
+    }
+    .section-title h3{margin:0; font-size:18px}
+    .section-title p{margin:0; color:var(--muted); font-size:13px}
+
+    .tiles{display:grid; grid-template-columns: repeat(3, 1fr); gap:12px}
+    .tile{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .tile h4{margin:0 0 8px 0}
+    .tile p{margin:0; color:var(--muted); line-height:1.5; font-size:13px}
+
+    table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px}
+    th, td{
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+      font-size:13px;
+    }
+    th{color: rgba(234,241,255,.95); background: rgba(255,255,255,.05); font-weight:700}
+    td{color: rgba(234,241,255,.90)}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-block; padding:4px 8px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size:12px;
+    }
+
+    .gallery{display:grid; grid-template-columns: 1.1fr .9fr; gap:12px}
+    .gallery .stack{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .imgbox{border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#0a0f1d}
+    .imgbox img{width:100%; height:100%; object-fit:cover; display:block}
+
+    .form-grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px 0}
+    input, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:110px; resize:vertical}
+    footer{
+      margin-top:18px;
+      padding:16px 0 26px 0;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .small{font-size:12px}
+    .note{
+      border-left:3px solid rgba(84,208,138,.6);
+      padding:10px 12px;
+      background: rgba(84,208,138,.06);
+      border-radius:10px;
+      color: rgba(234,241,255,.92);
+    }
+
+    @media (max-width: 900px){
+      .hero{grid-template-columns: 1fr}
+      .tiles{grid-template-columns: 1fr}
+      .gallery{grid-template-columns: 1fr}
+      .form-grid{grid-template-columns: 1fr}
+      nav ul{flex-wrap:wrap; justify-content:flex-end}
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand">
+  <img 
+    src="assets/img/logo.png" 
+    alt="Farm Project Logo" 
+    class="logo"
+  />
+  <div>
+    <h1>Farm Project</h1>
+  </div>
+</div>
+      
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="#overview">Animal Control</a></li>
+          <li><a href="#reports">Financial Reports</a></li>
+          <li><a href="#form">Operatiotinal Reports</a></li>
+         
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <div class="hero" id="overview">
+      <div class="card">
+        <div class="card-pad">
+          <span class="kicker"></span>
+
+          <!-- Header elements: h2 + h3 used elsewhere -->
+          <h2>End-to-end farm control: Animals, Feeding, Weighings, Events, Operational and Finance cost Control.</h2>
+
+          <!-- p + div + formatting elements: strong, em + abbr + sub -->
+          <p>
+            Track costs, margins and productivity across animals, lots and farm operations.
+Make informed decisions based on real data, improving profitability, cost control and long-term sustainability.
+          </p>
+
+          <div class="grid2" aria-label="Sample KPIs">
+            <div class="stat">
+              <strong>28</strong>
+              <span>Active animals (sample)</span>
+            </div>
+            <div class="stat">
+              <strong>€ 12,540</strong>
+              <span>Total cost by lot  (sample)</span>
+            </div>
+            <div class="stat">
+              <strong>+0.86 kg</strong>
+              <span>Average daily gain (AVG) (sample)</span>
+            </div>
+            <div class="stat">
+              <strong>2</strong>
+              <span>Lots in operation (sample)</span>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#form">Register an animal</a>
+            <a class="btn" href="#reports">Finance Reports</a>
+            <a class="btn" href= target="_blank" rel="noopener">
+              Operational Reports
+            </a>
+          </div>
+
+          <div class="note" style="margin-top:12px;">
+            <p class="small" style="margin:0;">
+             Centralized control of animals, health and sanitary events.
+Keep accurate records of animal status, treatments and phytosanitary actions to support informed decisions and healthier herds.
+            </p>
+          </div>
+
+          <!-- Quotes: q + blockquote -->
+          <blockquote class="small" style="margin:14px 0 0 0; color:var(--muted); border-left:2px solid var(--line); padding-left:12px;">
+            <q>Well-structured data supports better decisions: productivity, traceability, and cost control.</q>
+          </blockquote>
+
+          <p class="small muted" style="margin:10px 0 0 0;">
+          </p>
+        </div>
+      </div>
+
+      <aside class="card media" aria-label="Hero image">
+        <!-- Place your provided images in: assets/img/
+             Keep these filenames (recommended) or update the paths. -->
+        <img src="assets/img/OIP.webp" alt="Cows grazing on a green pasture (hero image)">
+        <div class="overlay" aria-hidden="true"></div>
+        <div class="caption">
+          <div class="pill"></div>
+          <p style="margin:8px 0 0 0;">
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- MODULES -->
+    <section id="modules">
+      <div class="section-title">
+        <h3>System modules</h3>
+      </p>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <h4>Animals</h4>
+          <p>
+  
+  Registration and management by <strong>tag</strong>, breed/type, sex, country of origin,
+  and lifecycle status. Designed to support traceability, health records, and audit-ready reporting.
+</p>
+
+
+          </ul>
+        </div>
+
+        <div class="tile">
+          <h4>Lots</h4>
+          <p>
+            Group management for the herd; supports a many-to-many allocation (lot ↔ animals).
+          </p>
+          <!-- lists: ol/li -->
+          <ol class="muted">
+            
+          </ol>
+        </div>
+
+        <div class="tile">
+          <h4>Performance & Costs</h4>
+          <p>
+            Weighings, daily feeding, and operational costs with reports by lot and by animal.
+          </p>
+          <p class="muted">
+            Reporting examples: average daily gain uses <strong>Average </strong>(daily_gain),
+            and total lot cost uses <strong>support</strong>(cost_value).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section aria-label="Image gallery">
+      <div class="section-title">
+        <h3>Gallery</h3>
+      </div>
+
+      <div class="gallery">
+        <div class="imgbox" style="min-height:260px;">
+          <img src="assets/img/OIP%20(3).webp" alt="Aerial view of cows in a pasture">
+        </div>
+        <div class="stack">
+          <div class="imgbox" style="min-height:124px;">
+            <img src="assets/img/OIP%20(1).webp" alt="Cow in the field (image 1)">
+          </div>
+          <div class="imgbox" style="min-height:124px;">
+            <img src="assets/img/OIP%20(2).webp" alt="Cow grazing (image 2)">
+          </div>
+        </div>
+      </div>
+
+      <p class="small muted" style="margin-top:10px;">
+ 
+      </p>
+    </section>
+
+    <!-- TABLE: table/tr/th/td -->
+    <section id="reports">
+      <div class="section-title">
+        <h3> Financial &amp; Operational Reports</h3>
+      
+      </div>
+
+      <div class="card">
+        <div class="card-pad">
+          <table aria-label="Reports table">
+            <tr>
+              <th>Report Type</th>
+              <th>Business Purpose</th>
+              <th>Result Set </th>
+            </tr>
+            <tr>
+              <td><span class="pill">Active animals</span></td>
+              <td>Provides a list of animals with active operational status.</td>
+              <td>Animal identifier, tag number, sex, country of origin, operational status.</td>
+            </tr>
+            <tr>
+              <td><span class="pill">By country of origin</span></td>
+              <td>Supports regulatory compliance and origin-based traceability analysis.</td>
+              <td>Records grouped and filtered by country identifier.</td>
+            </tr>
+            <tr>
+              <td><span class="pill">Weighing history</span></td>
+              <td>racks weight evolution and performance metrics per animal.</td>
+              <td>Weighing date, recorded weight (kg), calculated daily gain.</td>
+            </tr>
+            <tr>
+              <td><span class="pill">Lot costs</span></td>
+              <td>Aggregates cost data to support profitability and cost analysis.</td>
+              <td>Total cost value aggregated by lot identifier.</td>
+            </tr>
+          </table>
+
+          <p class="small muted" style="margin:10px 0 0 0;">
+           
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM: form/input/textarea -->
+	
+    <section id="form">
+      <div class="section-title">
+        <h3>Form Demo</h3>
+        <p>This does not send real data yet; it is a future-ready structure.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-pad">
+          <form action="submit.php" method="post" aria-label="Animal registration form">
+            <div class="form-grid">
+              <div>
+                <label for="tag">Animal tag </label>
+                <input id="tag" name="tag_number" type="text" placeholder="e.g., TAG001" required>
+              </div>
+
+              <div>
+                <label for="sex">Sex</label>
+                <input id="sex" name="sex" type="text" placeholder="male / female">
+              </div>
+
+              <div>
+                <label for="country">Country of origin</label>
+                <input id="country" name="country_id" type="number" placeholder="e.g., 1">
+              </div>
+
+              <div>
+                <label for="status">Status</label>
+                <input id="status" name="status" type="text" placeholder="active / sold / dead">
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label for="desc">Notes (description)</label>
+              <textarea id="desc" name="description" placeholder="Example: moved to lot A, health notes, feeding remarks, etc."></textarea>
+            </div>
+
+            <div class="cta-row" style="margin-top:12px;">
+              <input class="btn primary" type="submit" value="Save (demo)">
+              <input class="btn" type="reset" value="Clear">
+            </div>
+
+          
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT + IFRAME (extra future integration) -->
+    <section id="contact">
+      <div class="section-title">
+        <h3>Contact </h3>
+		
+     
+      </div>
+<div class="card">
+  <div class="card-pad">
+    <div class="grid2">
+      <div>
+	 
+        <h4 style="margin:0 0 8px 0;">Localização</h4>
+
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2420.020794828163!2d-8.618816988283246!3d52.659601971981715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x485b5c6e7adebbc1%3A0x54f670bb4fd00760!2sCollege%20of%20FET%2C%20Mulgrave%20Street%20Campus!5e0!3m2!1spt-BR!2sie!4v1768300330249!5m2!1spt-BR!2sie" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+              Quick navigation:
+              <a href="#overview">Top</a> •
+              <a href="#modules">Modules</a> •
+              <a href="#reports">Reports</a> •
+              <a href="#form">Form</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    <footer>
+
+        </p>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

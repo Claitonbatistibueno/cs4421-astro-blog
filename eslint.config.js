@@ -4,7 +4,7 @@ import eslintPluginAstro from 'eslint-plugin-astro';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/', '.astro/', 'node_modules/', 'cdk/'] },
+  { ignores: ['dist/', '.astro/', 'node_modules/', 'cdk/', 'farm-app/'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...eslintPluginAstro.configs.recommended,
