@@ -30,7 +30,31 @@ from this folder, split into data (`src/data/farm.ts`) and markup.
 
 `.idea/` was copied but is ignored by the repository's `.gitignore` (editor settings).
 
+## Run the full system with Docker (login, data entry, all PHP pages)
+
+Requirements: Docker Desktop.
+
+```bash
+cd farm-app
+docker compose up --build
+```
+
+Open http://localhost:8080 and log in with **Claiton / code 123456**.
+
+| Container | Image | What it does |
+|---|---|---|
+| `db` | `mariadb:10.11` | Creates the `farmproject` database and imports `farmproject.sql` on the first start (data kept in the `farm-db` volume). |
+| `web` | built from `Dockerfile` (`php:8.2-apache`) | Serves `index.html` and every `.php` page; Python is installed for the AI assistant. |
+
+The PHP and Python code reads `DB_HOST`, `DB_NAME`, `DB_USER` and `DB_PASS` from the
+environment (12-Factor config). When they are not set it falls back to the XAMPP values
+(`localhost`, `root`, empty password), so the project still runs on XAMPP unchanged.
+
+To use the AI assistant, export the key before starting: `export GEMINI_API_KEY=...`.
+
+To start again from a clean database: `docker compose down -v`.
+
 ## Next step
 
-This app goes live in the containerised branch (`feat/server-side-rendering`,
-Weeks 5–7: Docker → ECR → App Runner).
+Push the `web` image to Amazon ECR and run it on App Runner with a managed database
+(Weeks 6–7). The read-only reports are already live on the static site at `/reports`.

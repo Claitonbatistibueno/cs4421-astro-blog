@@ -1,0 +1,9 @@
+.git
+.idea
+Dockerfile
+docker-compose.yml
+.dockerignore
+.env
+*.md
+farmproject.sql
+temp_request_*.json

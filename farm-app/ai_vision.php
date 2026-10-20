@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents($temp_json_file, json_encode($request_data));
 
     // 3. Executar o script Python (Com caminho absoluto para Windows)
-    $python_path = 'C:\Users\clait\AppData\Local\Python\pythoncore-3.14-64\python.exe';
-    $script_path = __DIR__ . '\veterinary_assistant.py';
+    $python_path = getenv('PYTHON_PATH') ?: 'C:\Users\clait\AppData\Local\Python\pythoncore-3.14-64\python.exe';
+    $script_path = __DIR__ . DIRECTORY_SEPARATOR . 'veterinary_assistant.py';
     
     // O 2>&1 captura os erros do Python para o PHP conseguir ler
     $command = '"' . $python_path . '" "' . $script_path . '" "' . $temp_json_file . '" 2>&1';
