@@ -1,0 +1,61 @@
+---
+import FarmLayout from '../../layouts/FarmLayout.astro';
+import ReportNav from '../../components/reports/ReportNav.astro';
+import Stats from '../../components/reports/Stats.astro';
+import BarChart from '../../components/reports/BarChart.astro';
+import { loadFarmDb } from '../../lib/farmDb';
+import { animalsReport, MARKET_PRICE_PER_KG } from '../../lib/farmReports';
+import { formatCurrency, formatNumber } from '../../utils/format';
+
+const r = animalsReport(loadFarmDb());
+const statusClass = (s: string) => (s === 'active' ? 'ok' : s === 'sold' ? 'warn' : 'bad');
+---
+
+<FarmLayout title="Animal Analytics | Farm Project">
+	<h1>Animal Analytics</h1>
+	<ReportNav />
+	<Stats
+		items={[
+			{ value: formatNumber(r.stats.count), label: 'Animals' },
+			{ value: formatNumber(r.stats.active), label: 'Active' },
+			{ value: `${formatNumber(r.stats.totalWeight)} kg`, label: 'Total live weight' },
+			{ value: formatCurrency(r.stats.totalCost), label: 'Total cost (health + operational)' },
+			{ value: formatCurrency(r.stats.estRevenue), label: `Estimated value at € ${MARKET_PRICE_PER_KG}/kg` },
+		]}
+	/>
+	<div class="grid-2">
+		<BarChart title="By status" data={r.byStatus} />
+		<BarChart title="By breed" data={r.byBreed} />
+	</div>
+	<h2>Detailed list</h2>
+	<div class="table-scroll">
+		<table class="data-table">
+			<thead>
+				<tr>
+					<th>Tag</th><th>Breed</th><th>Sex</th><th>Country</th><th>Lot</th><th>Birth</th>
+					<th class="num">Weight (kg)</th><th class="num">Cost</th><th class="num">Est. value</th>
+					<th class="num">Profit/Loss</th><th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					r.animals.map((a) => (
+						<tr>
+							<td>{a.tag}</td>
+							<td>{a.breed}</td>
+							<td>{a.sex}</td>
+							<td>{a.country}</td>
+							<td>{a.lot || '—'}</td>
+							<td>{a.birthDate || '—'}</td>
+							<td class="num">{formatNumber(a.weight, 1)}</td>
+							<td class="num">{formatCurrency(a.cost)}</td>
+							<td class="num">{formatCurrency(a.estValue)}</td>
+							<td class:list={['num', a.profit >= 0 ? 'pos' : 'neg']}>{formatCurrency(a.profit)}</td>
+							<td><span class:list={['badge', statusClass(a.status)]}>{a.status}</span></td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+</FarmLayout>
