@@ -1,0 +1,108 @@
+name: Deploy Container to AWS
+
+# Continuous Deployment of the SSR container (Week 7):
+# every push to the SSR branch is tested, built into an image, pushed to
+# Amazon ECR and rolled out to Amazon ECS with zero downtime.
+# "Run workflow" with an image tag = Rollback Drill 2 (redeploy an older image, no rebuild).
+on:
+  push:
+    branches: [feat/server-side-rendering]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Existing ECR image tag to deploy (rollback). Leave empty to build the current commit.'
+        required: false
+        default: ''
+
+concurrency:
+  group: deploy-container
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: farm-project
+
+jobs:
+  quality-gate:
+    if: inputs.image_tag == ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check
+      - run: npm run test:unit
+
+  build-and-deploy:
+    needs: quality-gate
+    # Runs after a green quality gate, or straight away for a rollback.
+    if: always() && (needs.quality-gate.result == 'success' || inputs.image_tag != '')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: cdk/package-lock.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install CDK dependencies
+        run: npm ci
+        working-directory: cdk
+
+      - name: Ensure the ECR repository exists (IaC)
+        run: npx cdk deploy FarmEcrStack -c target=container --require-approval never
+        working-directory: cdk
+
+      - name: Choose the image tag
+        id: tag
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            echo "value=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"      # rollback
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"       # release, e.g. v1.0.0
+          else
+            echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"            # every commit
+          fi
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag and push the image
+        if: inputs.image_tag == ''
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ steps.tag.outputs.value }}
+        run: |
+          docker build --platform linux/amd64 -t "$REGISTRY/$ECR_REPOSITORY:$TAG" .
+          docker push "$REGISTRY/$ECR_REPOSITORY:$TAG"
+
+      - name: Check the rollback image exists
+        if: inputs.image_tag != ''
+        run: aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids imageTag="${{ inputs.image_tag }}"
+
+      - name: Roll out to Amazon ECS (rolling update, circuit breaker)
+        run: npx cdk deploy FarmEcsStack -c target=container -c imageTag=${{ steps.tag.outputs.value }} --require-approval never --outputs-file outputs.json
+        working-directory: cdk
+
+      - name: Smoke test the live service
+        working-directory: cdk
+        run: |
+          URL=$(node -e "console.log(require('./outputs.json').FarmEcsStack.ServiceURL)")
+          echo "Service: $URL"
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "$URL/api/health"
+          echo "### Deployed \`${{ steps.tag.outputs.value }}\` → $URL" >> "$GITHUB_STEP_SUMMARY"
