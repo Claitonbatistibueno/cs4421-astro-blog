@@ -1,0 +1,67 @@
+---
+import FarmLayout from '../../layouts/FarmLayout.astro';
+import ReportNav from '../../components/reports/ReportNav.astro';
+import Stats from '../../components/reports/Stats.astro';
+import BarChart from '../../components/reports/BarChart.astro';
+import { loadFarmDb } from '../../lib/farmDb';
+import { healthReport } from '../../lib/farmReports';
+import { formatCurrency, formatNumber } from '../../utils/format';
+
+const r = healthReport(loadFarmDb());
+---
+
+<FarmLayout title="Health & Sanitary | Farm Project">
+	<h1>Health &amp; Sanitary</h1>
+	<ReportNav />
+	<Stats
+		items={[
+			{ value: formatNumber(r.stats.treatments), label: 'Treatments recorded' },
+			{ value: formatNumber(r.stats.animalsTreated), label: 'Animals treated' },
+			{ value: formatCurrency(r.stats.totalCost), label: 'Total health cost' },
+			{ value: formatNumber(r.stats.blocked), label: 'Blocked (withdrawal period)' },
+		]}
+	/>
+	<div class="grid-2">
+		<BarChart title="Treatments by type" data={r.byType} />
+		<div class="card card-pad">
+			<strong>Withdrawal rule</strong>
+			<p class="muted small">
+				An animal is BLOCKED while today is before treatment date + the medicine's withdrawal days.
+				Do not harvest blocked animals. Status is calculated on the day the site is built.
+			</p>
+		</div>
+	</div>
+	<h2>Traceability log</h2>
+	<div class="table-scroll">
+		<table class="data-table">
+			<thead>
+				<tr>
+					<th>Date</th><th>Animal</th><th>Breed / Lot</th><th>Medicine</th><th>Diagnosis</th><th>Vet</th>
+					<th class="num">Cost</th><th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					r.records.map((h) => (
+						<tr>
+							<td>{h.date}</td>
+							<td>{h.tag}</td>
+							<td>{h.breed} {h.lot && <span class="muted">· {h.lot}</span>}</td>
+							<td>{h.medicine} {h.medType && <span class="muted">({h.medType})</span>}</td>
+							<td>{h.diagnosis || '—'}</td>
+							<td>{h.vet || '—'}</td>
+							<td class="num">{formatCurrency(h.cost)}</td>
+							<td>
+								{h.blocked ? (
+									<span class="badge bad">Blocked until {h.clearDate}</span>
+								) : (
+									<span class="badge ok">Clear</span>
+								)}
+							</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+</FarmLayout>
