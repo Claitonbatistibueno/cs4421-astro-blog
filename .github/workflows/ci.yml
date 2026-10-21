@@ -1,10 +1,11 @@
 name: Continuous Integration
 
+# Pull requests run CI directly. On main, CI is called by the deploy
+# workflow, so nothing reaches production before every check has passed.
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  workflow_call:
 
 jobs:
   validate:
