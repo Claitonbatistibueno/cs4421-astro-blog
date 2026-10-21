@@ -1,0 +1,56 @@
+# Dependabot: automated dependency and security updates (Week 3, DevSecOps shift-left).
+# Every update arrives as a normal pull request, so it must pass the same CI gate
+# (lint, astro check, tests, build) before it can be merged.
+version: 2
+updates:
+  # Site dependencies on main (static site)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore(deps)
+
+  # Same dependencies on the SSR branch (container on ECS)
+  - package-ecosystem: npm
+    directory: /
+    target-branch: feat/server-side-rendering
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore(deps)
+
+  # Infrastructure as code (AWS CDK)
+  - package-ecosystem: npm
+    directory: /cdk
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      cdk:
+        patterns: ['*']
+    commit-message:
+      prefix: chore(deps-cdk)
+
+  # GitHub Actions used by the pipelines (checkout, setup-node, aws-actions)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: chore(ci)
