@@ -33,10 +33,19 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            cdk/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run check
       - run: npm run test:unit
+      # Infrastructure tests: the ECS rollout settings (circuit breaker, health
+      # check, rolling update) are checked before any image is built.
+      - run: npm ci
+        working-directory: cdk
+      - run: npm test
+        working-directory: cdk
 
   build-and-deploy:
     needs: quality-gate
