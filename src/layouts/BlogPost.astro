@@ -1,86 +1,94 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
+import { type CollectionEntry, getEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import FarmLayout from './FarmLayout.astro';
+import { SITE_TITLE } from '../consts';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, author } = Astro.props;
+const authorEntry = author ? await getEntry('authors', author) : undefined;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+<FarmLayout title={`${title} | ${SITE_TITLE}`} description={description}>
+	<article class="post">
+		{
+			heroImage && (
+				<Image class="hero" width={1020} height={510} src={heroImage} alt="" />
+			)
+		}
+		<header class="post-header">
+			<p class="meta">
+				<FormattedDate date={pubDate} />
+				{authorEntry && <span> · {authorEntry.data.name}</span>}
+			</p>
+			<h1>{title}</h1>
+			{
+				updatedDate && (
+					<p class="meta">
+						Updated <FormattedDate date={updatedDate} />
+					</p>
+				)
 			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: red;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+		</header>
+		<div class="prose">
+			<slot />
+		</div>
+		{
+			authorEntry && (
+				<aside class="card card-pad author" aria-label="About the author">
+					<strong>{authorEntry.data.name}</strong>
+					<p class="muted small m-0">{authorEntry.data.bio}</p>
+				</aside>
+			)
+		}
+		<p><a href="/blog">← All updates</a></p>
+	</article>
+</FarmLayout>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+<style>
+	.post {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+	.hero {
+		width: 100%;
+		height: auto;
+		border-radius: 16px;
+	}
+	.post-header {
+		text-align: center;
+		padding: 16px 0 8px;
+		border-bottom: 1px solid var(--line);
+		margin-bottom: 24px;
+	}
+	.post-header h1 {
+		margin: 8px 0;
+	}
+	.meta {
+		margin: 0;
+		color: var(--muted);
+		font-size: 14px;
+	}
+	.prose :global(table) {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 14px;
+		display: block;
+		overflow-x: auto;
+	}
+	.prose :global(th),
+	.prose :global(td) {
+		padding: 8px 10px;
+		border-bottom: 1px solid var(--line);
+		text-align: left;
+		vertical-align: top;
+	}
+	.prose :global(th) {
+		color: var(--brand);
+	}
+	.author {
+		margin: 32px 0 16px;
+	}
+</style>
