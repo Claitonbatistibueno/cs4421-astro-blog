@@ -13,7 +13,7 @@ if (!isset($conn) || !isset($_SESSION['user_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $animal_id = $_POST['animal_id'] ?? null;
-    $item_id   = !empty($_POST['item_id']) ? $_POST['item_id'] : NULL;
+    $item_id   = !empty($_POST['item_id']) ? (int)$_POST['item_id'] : NULL; // int: used inside SQL below
     $date      = $_POST['treatment_date'] ?? date('Y-m-d');
     $vet       = $_POST['vet_name'] ?? '';
     $notes     = $_POST['diagnosis'] ?? '';
