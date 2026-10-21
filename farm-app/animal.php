@@ -48,15 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
 
 // --- 2. ACTION: SAVE ANIMAL ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'save_animal') {
-    $animal_id = $_POST['animal_id'];
+    $animal_id = (int)($_POST['animal_id'] ?? 0); // int: 0 means new animal; used inside SQL below
     $type_id   = $_POST['type_id']; 
     $gender    = $_POST['sex'];
     $status    = $_POST['status'];
     $dob       = $_POST['birth_date'];
     $city      = trim($_POST['birth_city']); 
     $country   = $_POST['country_id'];       
-    $new_lot_id = !empty($_POST['lot_id']) ? $_POST['lot_id'] : null;
-    $current_lot_id = !empty($_POST['current_lot_id']) ? $_POST['current_lot_id'] : null;
+    $new_lot_id = !empty($_POST['lot_id']) ? (int)$_POST['lot_id'] : null; // int: used inside SQL below
+    $current_lot_id = !empty($_POST['current_lot_id']) ? (int)$_POST['current_lot_id'] : null;
 
     if (empty($type_id) || empty($gender) || empty($status) || empty($dob) || empty($city) || empty($country) || empty($new_lot_id)) {
         $msg = "Error: All fields (Sex, Status, Date, Origin, Lot) are required.";
