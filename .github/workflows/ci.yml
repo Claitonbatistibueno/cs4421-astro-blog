@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            cdk/package-lock.json
 
       - name: Install Project Dependencies
         run: npm ci
@@ -30,3 +33,11 @@ jobs:
 
       - name: Build Astro Site
         run: npm run build
+
+      - name: Install CDK Dependencies
+        working-directory: cdk
+        run: npm ci
+
+      - name: Test Infrastructure (CDK assertions)
+        working-directory: cdk
+        run: npm test
