@@ -1,7 +1,7 @@
 ---
 title: 'Understanding Trunk-Based Development'
 description: 'A quick guide on trunk-based development and why teams use it.'
-pubDate: 'Sep 16 2026'
+pubDate: '2026-09-16'
 author: 'claiton'
 ---
 
