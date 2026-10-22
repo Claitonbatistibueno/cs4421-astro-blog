@@ -28,7 +28,7 @@ const statusClass = (s: string) => (s === 'active' ? 'ok' : s === 'sold' ? 'warn
 		<BarChart title="By breed" data={r.byBreed} />
 	</div>
 	<h2>Detailed list</h2>
-	<div class="table-scroll">
+	<div class="table-scroll" tabindex="0" role="region" aria-label="Detailed list of animals (scrollable table)">
 		<table class="data-table">
 			<thead>
 				<tr>
