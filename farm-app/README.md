@@ -27,8 +27,7 @@ Welcome to **Farm-Project**, this is my project submission for the Immersive Sof
 * **Artificial Intelligence (AI) Integration:**
     * Computer vision analysis (`ai_vision.php`).
     * AI prediction module (`previsao_ia.py`).
-    * Data logging and analysis in JSON (`ai_analysis.json`).
-    * Debug tools and logs (`debug_ai.php`, `ai_error_log.txt`).
+    * The prediction results are written to `ai_analysis.json` at runtime (not versioned).
 
 ##  Technologies Used
 
@@ -53,7 +52,7 @@ Welcome to **Farm-Project**, this is my project submission for the Immersive Sof
 
 ##  Development Notes
 
-* Log files (`ai_error_log.txt`) and debug files (`debug_ai.php`) are included to help identify issues in AI integrations.
+* Runtime output (`ai_analysis.json`, `ai_alerts.txt`, `ai_error_log.txt`, `temp_request_*.json`) is created when the system runs and is ignored by Git.
 * Ensure database credentials are correctly configured in the PHP files before using in production.
 
 ---

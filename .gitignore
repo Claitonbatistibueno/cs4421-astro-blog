@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# farm-app runtime output (written by the PHP/Python code, not source)
+farm-app/ai_analysis.json
+farm-app/ai_alerts.txt
+farm-app/ai_error_log.txt
+farm-app/temp_request_*.json
