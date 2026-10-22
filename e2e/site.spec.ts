@@ -35,13 +35,20 @@ for (const path of pages) {
     );
     expect(fits).toBe(true);
 
-    // Every image on the page actually loaded.
+    // Every image on the page actually loaded. Images are lazy-loaded and,
+    // on the SSR server, optimised on the first request, so the check waits
+    // (up to 10 s) for the browser to finish instead of reading it once.
     for (const image of await page.locator('img').all()) {
       await image.scrollIntoViewIfNeeded();
-      const loaded = await image.evaluate(
-        (img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0,
-      );
-      expect(loaded).toBe(true);
+      await expect
+        .poll(
+          () =>
+            image.evaluate(
+              (img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0,
+            ),
+          { timeout: 10_000 },
+        )
+        .toBe(true);
     }
 
     // Automated WCAG 2.1 A/AA scan.
