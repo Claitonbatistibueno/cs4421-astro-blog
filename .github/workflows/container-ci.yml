@@ -1,0 +1,53 @@
+name: Container Check
+
+# Shift-left for the container: every pull request into the SSR branch builds
+# the Docker image and runs it, before anything is merged or pushed to ECR.
+# The deploy pipeline only builds the image after the merge, so without this
+# a broken Dockerfile or a server that never becomes healthy was found late.
+on:
+  pull_request:
+    branches: [feat/server-side-rendering]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Build the image (same command as the deploy pipeline)
+        run: docker build --platform linux/amd64 -t farm-project:ci .
+
+      - name: Run the container
+        # --health-interval overrides the 30 s in the Dockerfile so the check is fast.
+        run: docker run -d -p 4321:4321 -e NODE_ENV=production --health-interval=2s --name farm farm-project:ci
+
+      - name: Wait for the Docker HEALTHCHECK to report healthy
+        run: |
+          for i in $(seq 1 30); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' farm)
+            echo "health: $status"
+            if [ "$status" = "healthy" ]; then exit 0; fi
+            if [ "$status" = "unhealthy" ]; then exit 1; fi
+            sleep 2
+          done
+          echo "Container did not become healthy in 60 seconds"
+          exit 1
+
+      - name: Smoke test the running container
+        run: |
+          curl -fsS http://localhost:4321/api/health | grep -q '"status":"ok"'
+          curl -fsS -o /dev/null http://localhost:4321/api/health/live
+          curl -fsS -o /dev/null http://localhost:4321/api/health/ready
+          curl -fsS http://localhost:4321/ | grep -q '<title>Farm Project'
+          curl -fsS -o /dev/null http://localhost:4321/dashboard
+          echo "All endpoints answered"
+
+      - name: Check the logs are structured JSON
+        run: |
+          docker logs farm 2>&1 | grep '"route":"/api/health"' | head -1 | tee line.json
+          node -e 'const l=JSON.parse(require("fs").readFileSync("line.json","utf8")); for (const k of ["timestamp","level","route","method","statusCode","latencyMs"]) if (!(k in l)) { console.error("missing key: "+k); process.exit(1) } console.log("JSON log keys OK")'
+
+      - name: Show the container logs
+        if: failure()
+        run: docker logs farm
