@@ -1,10 +1,13 @@
 name: Continuous Integration
 
+# Pull requests into either long-lived branch run CI directly.
+# On main, CI is also called by the static deploy workflow, so nothing
+# reaches S3 before every check has passed. On the SSR branch the
+# container pipeline runs the same checks in its own quality gate.
 on:
-  push:
-    branches: [main, feat/server-side-rendering]
   pull_request:
     branches: [main, feat/server-side-rendering]
+  workflow_call:
 
 jobs:
   validate:
