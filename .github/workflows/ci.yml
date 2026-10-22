@@ -35,6 +35,24 @@ jobs:
       - name: Build Astro Site
         run: npm run build
 
+      # End-to-end tests run inside the required `validate` job, so a broken
+      # page or an accessibility regression blocks the merge like any other test.
+      - name: Install Browser for End-to-End Tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run End-to-End Tests (desktop and mobile, axe accessibility scan)
+        run: npm run test:e2e
+
+      - name: Keep the Playwright Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
       - name: Install CDK Dependencies
         working-directory: cdk
         run: npm ci
