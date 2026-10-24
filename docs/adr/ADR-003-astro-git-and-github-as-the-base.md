@@ -37,10 +37,4 @@ I had to choose three things at the start: the framework for the site, where the
 - My first commits were messages like `teste de envio` and `Test 16/09`. They work, but they tell nothing to someone reading the history. From Week 2 I moved to Conventional Commits (ADR-004).
 - The template came with lorem ipsum and example posts. Some of it stayed on the live site until the Sprint 4 clean-up (PR #57).
 
-## Key terms (my notes)
 
-- **SDLC**: o ciclo de vida do software, do requisito até a operação (requisitos, design, código, teste, deploy, manutenção).
-- **SSG (Static Site Generation)**: as páginas são geradas uma vez, no build, e viram arquivos HTML prontos. Não precisa de servidor rodando.
-- **Commit**: uma "foto" do projeto num momento, com autor, data e mensagem. O Git guarda cada foto pelo seu hash (um código único).
-- **Repository (repo)**: a pasta do projeto com todo o histórico de commits.
-- **Agile vs Waterfall**: no Waterfall tudo é planejado no início e feito em sequência; no Agile o trabalho é entregue em ciclos curtos e o plano muda com o que se aprende.
