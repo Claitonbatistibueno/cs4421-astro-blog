@@ -1,8 +1,5 @@
 # ADR-006: Static hosting on S3 + CloudFront with AWS CDK, and rollback by `git revert`
 
-## Status
-
-Accepted (Date: 2026-09-29). Week 4, Milestone 1. CloudFront clean-URL function added on 2026-10-20. Rollback Drill 1 run on 2026-10-20 (PRs #51, #53).
 
 ## Context
 
