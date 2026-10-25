@@ -28,3 +28,7 @@ farm-app/ai_analysis.json
 farm-app/ai_alerts.txt
 farm-app/ai_error_log.txt
 farm-app/temp_request_*.json
+
+# Playwright output
+playwright-report/
+test-results/
