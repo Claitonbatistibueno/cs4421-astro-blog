@@ -34,5 +34,3 @@ At this point I needed a way to plan the work week by week and a rule for how co
 - Every change starts from `main` on its own branch, named by type: `feat/...`, `fix/...`, `docs/...`, `test/...`, `ci/...`.
 - A change only reaches `main` through a pull request. The PR description has `Closes #N`, so GitHub closes the issue and links it when the PR is merged.
 - Commit messages follow Conventional Commits: `type(scope): what changed`, for example `feat(reports): add farm dashboard`.
-
- linha.
