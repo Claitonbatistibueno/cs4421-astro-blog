@@ -27,7 +27,7 @@ const perfClass = (p: string) => (p === 'High' ? 'ok' : p === 'Good' ? 'warn' : 
 		<BarChart title="Performance (ADG: Low < 0.8 · Good < 1.2 · High)" data={r.performance} />
 	</div>
 	<h2>Individual performance &amp; projection</h2>
-	<div class="table-scroll">
+	<div class="table-scroll" tabindex="0" role="region" aria-label="Individual performance and projection (scrollable table)">
 		<table class="data-table">
 			<thead>
 				<tr>
