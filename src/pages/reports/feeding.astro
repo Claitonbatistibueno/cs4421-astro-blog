@@ -26,7 +26,7 @@ const r = feedingReport(loadFarmDb());
 		<BarChart title="Kilograms per day" data={r.kgByDay} format={(v) => `${formatNumber(v, 1)} kg`} />
 	</div>
 	<h2>Feeding log</h2>
-	<div class="table-scroll">
+	<div class="table-scroll" tabindex="0" role="region" aria-label="Feeding log (scrollable table)">
 		<table class="data-table">
 			<thead>
 				<tr>

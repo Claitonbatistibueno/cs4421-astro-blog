@@ -14,5 +14,6 @@ Each ADR records one decision: the context, the options I looked at, what I chos
 | W7 | Container hosting | ADR-002: Run the SSR container on ECS Fargate (on the [`feat/server-side-rendering`](https://github.com/Claitonbatistibueno/cs4421-astro-blog/blob/feat/server-side-rendering/docs/adr/ADR-002-run-ssr-container-on-ecs-fargate.md) branch) |
 | W7 | CD, SRE, Rollback Drill 2 | [ADR-009: Safe releases and rollback by image tag](ADR-009-safe-container-releases-and-rollback-by-image-tag.md) |
 | W8 prep | Deploy gate, smoke test | [ADR-010: Deploy gate and smoke test](ADR-010-deploy-gate-and-smoke-test.md) |
+| W8 prep | Browser tests, container check | [ADR-011: Playwright + axe, container check on PRs](ADR-011-browser-tests-and-container-check.md) |
 
-ADR-001 and ADR-002 were written during Weeks 5 and 7. ADR-003 to ADR-007 record decisions I took in Weeks 1 to 6 but only wrote down later, so their dates are the dates of the decision, not of the file.
+
