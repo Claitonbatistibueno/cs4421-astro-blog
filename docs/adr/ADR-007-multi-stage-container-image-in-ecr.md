@@ -1,8 +1,6 @@
 # ADR-007: Multi-stage Docker image stored in Amazon ECR
 
-## Status
 
-Accepted (Date: 2026-10-07, rebuilt on 2026-10-20). Week 6, Milestone 3. Applies to the `feat/server-side-rendering` branch (see ADR-008).
 
 ## Context
 

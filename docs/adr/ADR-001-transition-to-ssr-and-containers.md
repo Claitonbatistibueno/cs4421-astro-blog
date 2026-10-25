@@ -1,8 +1,6 @@
 # ADR-001: Transition from Static Site to Containerized SSR Runtime
 
-## Status
 
-Accepted (Date: 2026-10-05)
 
 ## Context
 
