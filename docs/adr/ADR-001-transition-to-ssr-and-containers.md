@@ -25,7 +25,7 @@ Amazon S3 only stores and serves files. It cannot execute server-side Node.js co
 
 ## Decision
 
-We will configure Astro with `output: 'server'` and the `@astrojs/node` adapter in `standalone` mode. The application will expose:
+
 
 - `GET /api/health` — returns HTTP 200 with `status`, `uptime` and `timestamp` in JSON.
 - `POST /api/feedback` — validates and accepts feedback messages.
