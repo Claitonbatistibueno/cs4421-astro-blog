@@ -1,0 +1,20 @@
+# Keep the build context small and free of secrets.
+node_modules/
+dist/
+.astro/
+.git/
+.github/
+.vscode/
+.idea/
+cdk/
+docs/
+*.md
+!src/**/*.md
+.env
+.env.*
+Dockerfile
+.dockerignore
+
+# farm-app is the PHP system (its own Dockerfile); only the data file is needed here.
+farm-app/*
+!farm-app/farmproject.sql
