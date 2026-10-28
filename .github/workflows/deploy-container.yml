@@ -9,6 +9,7 @@ on:
     branches: [feat/server-side-rendering]
     tags: ['v*']
   workflow_dispatch:
+  # Cria o botão Run workflow no Actions, com um campo para digitar a tag (v1.0.0)
     inputs:
       image_tag:
         description: 'Existing ECR image tag to deploy (rollback). Leave empty to build the current commit.'
@@ -25,6 +26,7 @@ env:
 
 jobs:
   quality-gate:
+  #Quando você informa uma tag, pula os testes
     if: inputs.image_tag == ''
     runs-on: ubuntu-latest
     steps:
@@ -92,6 +94,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag and push the image
+      # pula o build da imagem. Por isso levou 42 s
         if: inputs.image_tag == ''
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -99,7 +102,7 @@ jobs:
         run: |
           docker build --platform linux/amd64 -t "$REGISTRY/$ECR_REPOSITORY:$TAG" .
           docker push "$REGISTRY/$ECR_REPOSITORY:$TAG"
-
+    #Confere no ECR se a tag existe antes de fazer o deploy
       - name: Check the rollback image exists
         if: inputs.image_tag != ''
         run: aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids imageTag="${{ inputs.image_tag }}"

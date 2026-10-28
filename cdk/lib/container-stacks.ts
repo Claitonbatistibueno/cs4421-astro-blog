@@ -68,19 +68,24 @@ export class EcsStack extends cdk.Stack {
       },
       // Rolling update with zero downtime: start the new task before stopping the old one.
       minHealthyPercent: 100,
+      //A task antiga nunca é desligada antes da nova estar saudável → zero downtime
       maxHealthyPercent: 200,
+      //Permite rodar as duas ao mesmo tempo (a antiga + a nova) durante o deploy
       // If the new version never becomes healthy, ECS rolls back to the previous one by itself.
       circuitBreaker: { rollback: true },
+      //A recuperação automática. Se a nova nunca fica saudável, 
+      //o ECS desiste e volta para a versão anterior sozinho
       healthCheckGracePeriod: cdk.Duration.seconds(30),
+      // Sao 30 s para o Node iniciar antes de contar as falhas
     });
-
+    //este e health check que detectou o bug
     service.targetGroup.configureHealthCheck({
-      path: '/api/health',
-      healthyHttpCodes: '200',
+      path: '/api/health', // a rota que quebrou
+      healthyHttpCodes: '200', // só 200 é saudável — o bug devolvia 500
       interval: cdk.Duration.seconds(15),
       timeout: cdk.Duration.seconds(5),
       healthyThresholdCount: 2,
-      unhealthyThresholdCount: 2,
+      unhealthyThresholdCount: 2, //// 2 falhas seguidas = unhealthy
     });
     service.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '10');
 
